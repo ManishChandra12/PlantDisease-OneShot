@@ -114,18 +114,23 @@ def main(cropped):
                                   callbacks=keras_callbacks,
                                   )
 
-    train_generator.reset()
-    val_generator.reset()
-    train_acc, train_f1 = acc_and_f1(model, train_generator)
-    val_acc, val_f1 = acc_and_f1(model, val_generator)
     test_acc, test_f1 = acc_and_f1(model, test_generator)
-
-    print("Final Train Accuracy: " + str(train_acc))
-    print("Final Train F1: " + str(train_f1))
-    print("Final Val Accuracy: " + str(val_acc))
-    print("Final Val F1: " + str(val_f1))
     print("Final Test Accuracy: " + str(test_acc))
     print("Final Test F1: " + str(test_f1))
+
+    # serialize model to JSON
+    model_json = model.to_json()
+    if args.cropped:
+        folder = 'models/cropped_resnet'
+    else:
+        folder = 'models/uncropped_resnet'
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+    with open(folder + "/model_cropped_resnet.json", "w") as json_file:
+        json_file.write(model_json)
+    # serialize weights to HDF5
+    model.save_weights(folder + "/model.h5")
+    print("Saved model to disk")
 
 
 if __name__ == '__main__':
