@@ -1,18 +1,23 @@
+import argparse
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications import InceptionResNetV2
 from keras import layers
 from keras import models
 from keras import optimizers
 from keras.callbacks import EarlyStopping
+import tensorflow as tf
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 import os
-from CONSTANTS import PROCESSED_DATA_DIR
+from CONSTANTS import RAW_DATA_DIR, PROCESSED_DATA_DIR
+
+np.random.seed(1)
+tf.random.set_seed(1)
 
 
-def get_generators():
+def get_generators(cropped):
     # train data generator
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
@@ -26,24 +31,44 @@ def get_generators():
     # test data generator
     test_datagen = ImageDataGenerator(rescale=1. / 255)
 
-    train_generator = train_datagen.flow_from_directory(
-        os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/train/'),
-        target_size=(100, 100),
-        batch_size=32,
-        class_mode='categorical')
+    if cropped:
+        train_generator = train_datagen.flow_from_directory(
+            os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/train/'),
+            target_size=(100, 100),
+            batch_size=32,
+            class_mode='categorical')
 
-    test_generator = test_datagen.flow_from_directory(
-        os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/test/'),
-        target_size=(100, 100),
-        batch_size=32,
-        class_mode='categorical',
-        shuffle=False)
+        test_generator = test_datagen.flow_from_directory(
+            os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/test/'),
+            target_size=(100, 100),
+            batch_size=32,
+            class_mode='categorical',
+            shuffle=False)
 
-    val_generator = test_datagen.flow_from_directory(
-        os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/val/'),
-        target_size=(100, 100),
-        batch_size=32,
-        class_mode='categorical')
+        val_generator = test_datagen.flow_from_directory(
+            os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/val/'),
+            target_size=(100, 100),
+            batch_size=32,
+            class_mode='categorical')
+    else:
+        train_generator = train_datagen.flow_from_directory(
+            os.path.join(RAW_DATA_DIR, 'train/'),
+            target_size=(100, 100),
+            batch_size=32,
+            class_mode='categorical')
+
+        test_generator = test_datagen.flow_from_directory(
+            os.path.join(RAW_DATA_DIR, 'test/'),
+            target_size=(100, 100),
+            batch_size=32,
+            class_mode='categorical',
+            shuffle=False)
+
+        val_generator = test_datagen.flow_from_directory(
+            os.path.join(RAW_DATA_DIR, 'val/'),
+            target_size=(100, 100),
+            batch_size=32,
+            class_mode='categorical')
 
     return train_generator, val_generator, test_generator
 
@@ -63,8 +88,8 @@ def acc_and_f1(model, generator):
     return accuracy_score(y_true, a), f1_score(y_true, a, average='micro')
 
 
-def main():
-    train_generator, val_generator, test_generator = get_generators()
+def main(cropped):
+    train_generator, val_generator, test_generator = get_generators(cropped)
 
     conv_base = InceptionResNetV2(weights='imagenet', include_top=False, input_shape=(100, 100, 3))
     model = models.Sequential()
@@ -89,6 +114,8 @@ def main():
                                   callbacks=keras_callbacks,
                                   )
 
+    train_generator.reset()
+    val_generator.reset()
     train_acc, train_f1 = acc_and_f1(model, train_generator)
     val_acc, val_f1 = acc_and_f1(model, val_generator)
     test_acc, test_f1 = acc_and_f1(model, test_generator)
@@ -102,4 +129,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--cropped", action='store_true', help="whether to train on cropped dataset")
+    args = parser.parse_args()
+
+    main(args.cropped)
