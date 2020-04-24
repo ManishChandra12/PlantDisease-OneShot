@@ -1,0 +1,7 @@
+__pycache__
+.idea
+Pipfile.lock
+cropped
+PlantDoc-Dataset
+src/Notebooks
+src/__pycache__
