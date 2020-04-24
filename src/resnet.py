@@ -103,7 +103,7 @@ def main(cropped):
                   metrics=['acc'])
 
     keras_callbacks = [
-        EarlyStopping(monitor='val_loss', patience=3, mode='min', min_delta=0.0001)
+        EarlyStopping(monitor='val_loss', patience=3, mode='min', min_delta=0.0001, restore_best_weights=True)
     ]
 
     history = model.fit_generator(train_generator,
