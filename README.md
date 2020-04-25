@@ -21,3 +21,9 @@ pipenv shell
 
 ## Generate cropped images
 ```python3 -m src.generate_cropped```
+
+## Finetune RESNET on uncropped images
+```python3 -m src.resnet```
+
+## Finetune RESNET on cropped images
+```python3 -m src.resnet --cropped```
