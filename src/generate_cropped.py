@@ -39,7 +39,6 @@ def main():
 			filepath = os.path.join(subdir, file)
 			if filepath.endswith('.jpg'):
 				shutil.move(filepath, filepath.replace('test', 'train'))
-
 	shutil.rmtree('cropped/PlantDoc-Dataset/test')
 	shutil.move('cropped/PlantDoc-Dataset/train', 'cropped/PlantDoc-Dataset/all')
 	split_folders.ratio('cropped/PlantDoc-Dataset/all', output='cropped/PlantDoc-Dataset/splitted', seed=1337, ratio=(0.6, 0.2, 0.2))
