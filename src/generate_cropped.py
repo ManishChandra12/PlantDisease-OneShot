@@ -34,7 +34,7 @@ def main():
 							print(img.shape)
 							print(xmin[i]-1, xmax[i]-1, ymin[i]-1, ymax[i]-1)
 
-	for subdir, dirs, files in os.walk('PlantDoc-Dataset/test'):
+	for subdir, dirs, files in os.walk('cropped/PlantDoc-Dataset/test'):
 		for file in files:
 			filepath = os.path.join(subdir, file)
 			if filepath.endswith('.jpg'):
@@ -52,7 +52,7 @@ def main():
 	shutil.rmtree('cropped/PlantDoc-Dataset/test/Tomato two spotted spider mites leaf')
 	shutil.rmtree('cropped/PlantDoc-Dataset/val/Tomato two spotted spider mites leaf')
 
-	for subdir, dirs, files in os.walk('cropped/PlantDoc-Dataset/test'):
+	for subdir, dirs, files in os.walk('PlantDoc-Dataset/test'):
 		for file in files:
 			filepath = os.path.join(subdir, file)
 			if filepath.endswith('.jpg'):
