@@ -4,3 +4,7 @@ Pipfile.lock
 cropped
 PlantDoc-Dataset
 src/__pycache__
+train_siamese_data.csv
+train_siamese_data_cropped.csv
+val_siamese_data.csv
+val_siamese_data_cropped.csv
