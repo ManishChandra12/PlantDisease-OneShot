@@ -126,7 +126,7 @@ def main(cropped):
         folder = 'models/uncropped_resnet'
     if not os.path.exists(folder):
         os.mkdir(folder)
-    with open(folder + "/model_cropped_resnet.json", "w") as json_file:
+    with open(folder + "/model_resnet.json", "w") as json_file:
         json_file.write(model_json)
     # serialize weights to HDF5
     model.save_weights(folder + "/model.h5")
