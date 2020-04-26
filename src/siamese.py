@@ -20,13 +20,17 @@ def get_flow_from_dataframe(generator, dataframe, image_shape=(100, 100), batch_
                                                       x_col='filename1',
                                                       y_col='class',
                                                       class_mode='binary',
-                                                      batch_size=batch_size)
+                                                      batch_size=batch_size,
+                                                      shuffle=True,
+                                                      seed=42)
 
     train_generator_2 = generator.flow_from_dataframe(dataframe, target_size=image_shape,
                                                       x_col='filename2',
                                                       y_col='class',
                                                       class_mode='binary',
-                                                      batch_size=batch_size)
+                                                      batch_size=batch_size,
+                                                      shuffle=True,
+                                                      seed=42)
     while True:
         x_1 = train_generator_1.next()
         x_2 = train_generator_2.next()
@@ -66,6 +70,7 @@ def get_siamese_model(input_shape):
 
 
 def main(cropped):
+    BATCH_SIZE = 128
     datagen_args = dict(rescale=1. / 255,
                         rotation_range=40,
                         width_shift_range=0.2,
@@ -88,9 +93,9 @@ def main(cropped):
         df_val['class'] = df_val['class'].astype('str')
 
     train_gen = get_flow_from_dataframe(train_datagen, df_train, image_shape=(100, 100),
-                                        batch_size=32)
+                                        batch_size=BATCH_SIZE)
     val_gen = get_flow_from_dataframe(val_datagen, df_val, image_shape=(100, 100),
-                                      batch_size=32)
+                                      batch_size=BATCH_SIZE)
 
     model = get_siamese_model((100, 100, 3))
     print(model.summary())
@@ -103,18 +108,18 @@ def main(cropped):
 
     if cropped:
         history = model.fit_generator(train_gen,
-                                      steps_per_epoch=1384974 // 32,
+                                      steps_per_epoch=1384974 // BATCH_SIZE,
                                       epochs=30,
                                       validation_data=val_gen,
-                                      validation_steps=151710 // 32,
+                                      validation_steps=151710 // BATCH_SIZE,
                                       callbacks=keras_callbacks,
                                       )
     else:
         history = model.fit_generator(train_gen,
-                                      steps_per_epoch=94830 // 32,
+                                      steps_per_epoch=94830 // BATCH_SIZE,
                                       epochs=30,
                                       validation_data=val_gen,
-                                      validation_steps=9942 // 32,
+                                      validation_steps=9942 // BATCH_SIZE,
                                       callbacks=keras_callbacks,
                                       )
 
