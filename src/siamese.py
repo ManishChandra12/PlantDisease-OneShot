@@ -69,6 +69,14 @@ def get_siamese_model(input_shape):
     return siamese_net
 
 
+def freeze_layers(model):
+    for i in model.layers:
+        i.trainable = False
+        if isinstance(i, Model):
+            freeze_layers(i)
+    return model
+
+
 def main(cropped):
     BATCH_SIZE = 128
     datagen_args = dict(rescale=1. / 255,
@@ -100,10 +108,10 @@ def main(cropped):
     model = get_siamese_model((100, 100, 3))
     print(model.summary())
 
-    model.compile(loss='binary_crossentropy', optimizer=optimizers.SGD(learning_rate=0.001, momentum=0.9),
+    model.compile(loss='binary_crossentropy', optimizer=optimizers.Adam(learning_rate=0.001),
                   metrics=['acc'])
     keras_callbacks = [
-        EarlyStopping(monitor='val_loss', patience=3, mode='min', min_delta=0.0001, restore_best_weights=True)
+        EarlyStopping(monitor='val_loss', patience=2, mode='min', min_delta=0.0001, restore_best_weights=True)
     ]
 
     if cropped:
@@ -123,6 +131,7 @@ def main(cropped):
                                       callbacks=keras_callbacks,
                                       )
 
+    model = freeze_layers(model)
     # serialize model to JSON
     model_json = model.to_json()
     if args.cropped:
