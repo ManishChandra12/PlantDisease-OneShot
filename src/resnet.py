@@ -88,7 +88,7 @@ def acc_and_f1(model, generator):
     generator.reset()
     y_true = np.array(pd.get_dummies(pd.Series(generator.classes)))
 
-    return accuracy_score(y_true, a), f1_score(y_true, a, average='micro')
+    return accuracy_score(y_true, a), f1_score(y_true, a, average='macro')
 
 
 def main(cropped):
@@ -98,7 +98,7 @@ def main(cropped):
     model = models.Sequential()
     model.add(conv_base)
     model.add(layers.Flatten())
-    model.add(layers.Dense(256, activation='relu', kernel_initializer='orthogonal', bias_initializer='zeros'))
+#     model.add(layers.Dense(256, activation='relu', kernel_initializer='orthogonal', bias_initializer='zeros'))
     model.add(layers.Dense(27, activation='softmax', kernel_initializer='orthogonal', bias_initializer='zeros'))
     print(model.summary())
 
@@ -109,11 +109,13 @@ def main(cropped):
         EarlyStopping(monitor='val_loss', patience=3, mode='min', min_delta=0.0001, restore_best_weights=True)
     ]
 
+    train_stpep = train_generator.n // train_generator.batch_size
+    val_stpep = val_generator.n // val_generator.batch_size
     history = model.fit_generator(train_generator,
-                                  steps_per_epoch=5312 // 32,
+                                  steps_per_epoch=train_stpep,
                                   epochs=30,
                                   validation_data=val_generator,
-                                  validation_steps=1763 // 32,
+                                  validation_steps=val_stpep,
                                   callbacks=keras_callbacks,
                                   )
 

@@ -40,27 +40,27 @@ def main(cropped):
         generator = datagen.flow_from_directory(
             os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/train/'),
             target_size=(100, 100),
-            batch_size=73,
+            batch_size=166,
             class_mode='categorical',
             shuffle=False)
-        a = model.predict_generator(generator, 21)
+        a = model.predict_generator(generator, 32)
         generator.reset()
         with open('embeddings/cropped_siamese_train_feature.pkl', 'wb') as f:
             pickle.dump(a, f)
-        with open('embeddings/uncropped_siamese_train_label.pkl', 'wb') as f:
+        with open('embeddings/cropped_siamese_train_label.pkl', 'wb') as f:
             pickle.dump(generator.classes, f)
 
         generator = datagen.flow_from_directory(
             os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/test/'),
             target_size=(100, 100),
-            batch_size=107,
+            batch_size=257,
             class_mode='categorical',
             shuffle=False)
-        a = model.predict_generator(generator, 5)
+        a = model.predict_generator(generator, 7)
         generator.reset()
         with open('embeddings/cropped_siamese_test_feature.pkl', 'wb') as f:
             pickle.dump(a, f)
-        with open('embeddings/uncropped_siamese_test_label.pkl', 'wb') as f:
+        with open('embeddings/cropped_siamese_test_label.pkl', 'wb') as f:
             pickle.dump(generator.classes, f)
 
     else:
