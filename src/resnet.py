@@ -101,7 +101,7 @@ def main(cropped):
     model.add(layers.Dense(27, activation='softmax', kernel_initializer='orthogonal', bias_initializer='zeros'))
     print(model.summary())
 
-    model.compile(loss='categorical_crossentropy', optimizer=optimizers.SGD(learning_rate=0.001, momentum=0.9),
+    model.compile(loss='categorical_crossentropy', optimizer=optimizers.Adam(learning_rate=0.001),
                   metrics=['acc'])
 
     keras_callbacks = [
