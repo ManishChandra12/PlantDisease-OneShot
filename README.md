@@ -30,9 +30,11 @@ pipenv shell
 
 ## Generate training and validation data for Siamese network (uncropped images) (This may take a long time)
 ```python3 -m src.generate_siamese_datacsv```
+The output CSVs can be directly downloaded from https://drive.google.com/open?id=1_LEjREWqrpQrq50lrhsVuoM_5ZWkMYbf
 
 ## Generate training and validation data for Siamese network (cropped images) (This may take a long time)
 ```python3 -m src.generate_siamese_datacsv --cropped```
+The output CSVs can be directly downloaded from https://drive.google.com/open?id=1_LEjREWqrpQrq50lrhsVuoM_5ZWkMYbf
 
 ## Train Siamese network on uncropped images
 ```python3 -m src.siamese```
