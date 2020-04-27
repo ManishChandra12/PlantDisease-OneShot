@@ -36,12 +36,14 @@ def get_generators(cropped):
             os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/train/'),
             target_size=(100, 100),
             batch_size=32,
-            class_mode='categorical')
+            class_mode='categorical',
+            shuffle=True,
+            seed=42)
 
         test_generator = test_datagen.flow_from_directory(
             os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/test/'),
             target_size=(100, 100),
-            batch_size=32,
+            batch_size=1,
             class_mode='categorical',
             shuffle=False)
 
@@ -49,7 +51,8 @@ def get_generators(cropped):
             os.path.join(PROCESSED_DATA_DIR, 'PlantDoc-Dataset/val/'),
             target_size=(100, 100),
             batch_size=32,
-            class_mode='categorical')
+            class_mode='categorical',
+            shuffle=False)
     else:
         train_generator = train_datagen.flow_from_directory(
             os.path.join(RAW_DATA_DIR, 'train/'),
@@ -60,7 +63,7 @@ def get_generators(cropped):
         test_generator = test_datagen.flow_from_directory(
             os.path.join(RAW_DATA_DIR, 'test/'),
             target_size=(100, 100),
-            batch_size=32,
+            batch_size=1,
             class_mode='categorical',
             shuffle=False)
 
@@ -126,7 +129,7 @@ def main(cropped):
         folder = 'models/uncropped_resnet'
     if not os.path.exists(folder):
         os.mkdir(folder)
-    with open(folder + "/model_cropped_resnet.json", "w") as json_file:
+    with open(folder + "/model_resnet.json", "w") as json_file:
         json_file.write(model_json)
     # serialize weights to HDF5
     model.save_weights(folder + "/model.h5")
