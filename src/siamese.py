@@ -48,7 +48,6 @@ def get_siamese_model(input_shape):
     model = models.Sequential(name='shared')
     model.add(conv_base)
     model.add(layers.Flatten())
-    model.add(layers.Dense(256, activation='relu', kernel_initializer='orthogonal', bias_initializer='zeros'))
 
     # Generate the encodings (feature vectors) for the two images
     encoded_l = model(left_input)
@@ -114,22 +113,15 @@ def main(cropped):
         EarlyStopping(monitor='val_loss', patience=2, mode='min', min_delta=0.0001, restore_best_weights=True)
     ]
 
-    if cropped:
-        history = model.fit_generator(train_gen,
-                                      steps_per_epoch=1384974 // BATCH_SIZE,
-                                      epochs=30,
-                                      validation_data=val_gen,
-                                      validation_steps=151710 // BATCH_SIZE,
-                                      callbacks=keras_callbacks,
-                                      )
-    else:
-        history = model.fit_generator(train_gen,
-                                      steps_per_epoch=94830 // BATCH_SIZE,
-                                      epochs=30,
-                                      validation_data=val_gen,
-                                      validation_steps=9942 // BATCH_SIZE,
-                                      callbacks=keras_callbacks,
-                                      )
+    train_stpep = train_gen.n // train_gen.batch_size
+    val_stpep = val_gen.n // val_gen.batch_size
+    history = model.fit_generator(train_gen,
+                                  steps_per_epoch=train_stpep,
+                                  epochs=30,
+                                  validation_data=val_gen,
+                                  validation_steps=val_stpep,
+                                  callbacks=keras_callbacks,
+                                  )
 
     model = freeze_layers(model)
     # serialize model to JSON
