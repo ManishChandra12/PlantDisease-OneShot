@@ -48,6 +48,7 @@ def get_siamese_model(input_shape):
     model = models.Sequential(name='shared')
     model.add(conv_base)
     model.add(layers.Flatten())
+    model.add(layers.Dense(256, activation='relu', kernel_initializer='orthogonal', bias_initializer='zeros'))
 
     # Generate the encodings (feature vectors) for the two images
     encoded_l = model(left_input)
@@ -107,7 +108,7 @@ def main(cropped):
     model = get_siamese_model((100, 100, 3))
     print(model.summary())
 
-    model.compile(loss='binary_crossentropy', optimizer=optimizers.Adam(learning_rate=0.001),
+    model.compile(loss='binary_crossentropy', optimizer=optimizers.SGD(learning_rate=0.001, momentum=0.9),
                   metrics=['acc'])
     keras_callbacks = [
         EarlyStopping(monitor='val_loss', patience=2, mode='min', min_delta=0.0001, restore_best_weights=True)

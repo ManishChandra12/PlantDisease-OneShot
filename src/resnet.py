@@ -98,6 +98,7 @@ def main(cropped):
     model = models.Sequential()
     model.add(conv_base)
     model.add(layers.Flatten())
+    model.add(layers.Dense(256, activation='relu', kernel_initializer='orthogonal', bias_initializer='zeros'))
     model.add(layers.Dense(27, activation='softmax', kernel_initializer='orthogonal', bias_initializer='zeros'))
     print(model.summary())
 
