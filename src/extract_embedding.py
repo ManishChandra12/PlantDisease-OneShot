@@ -49,7 +49,7 @@ def main(cropped, which_model):
         model = Model(iinput, x)
         print(model.summary())
     elif which_model == 'resnet':
-        model = Model(inputs=loaded_model.input, outputs=loaded_model.get_layer('flatten_1').output)
+        model = Model(inputs=loaded_model.input, outputs=loaded_model.get_layer('dense_1').output)
         print(model.summary())
 
     datagen = ImageDataGenerator(rescale=1. / 255)
