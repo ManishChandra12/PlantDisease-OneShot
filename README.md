@@ -1,4 +1,5 @@
 # PlantDisease-OneShot
+Technical Report: https://www.researchgate.net/publication/341322315_CLASSIFICATION_OF_VARIOUS_PLANT_DISEASES_USING_DEEP_SIAMESE_NETWORK
 
 ## Project Setup
 1. Clone the repo
